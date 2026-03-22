@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: completed-pod
+spec:
+  restartPolicy: Never  
+  containers:
+  - name: complete-container
+    image: busybox
+    command: ["sh", "-c", "echo Job Done && sleep 30 && exit 0"]
