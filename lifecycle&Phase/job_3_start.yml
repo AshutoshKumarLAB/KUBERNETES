@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: retry-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: retry-job
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: retry-container
+        image: busybox
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        command:
+        - sh
+        - -c
+        - |
+          COUNT_FILE=/data/count
+
+          if [ ! -f $COUNT_FILE ]; then
+            echo 1 > $COUNT_FILE
+          fi
+
+          COUNT=$(cat $COUNT_FILE)
+          echo "Run number: $COUNT"
+
+          if [ "$COUNT" -lt 3 ]; then
+            echo $((COUNT+1)) > $COUNT_FILE
+            echo "Failing..."
+            exit 1
+          else
+            echo "Success on 3rd attempt!"
+            exit 0
+          fi
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: retry-pvc
