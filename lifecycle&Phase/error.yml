@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: error-pod
+spec:
+  restartPolicy: Never   
+  containers:
+  - name: error-container
+    image: busybox
+    command: ["sh", "-c", "echo Hello && exit 1"]
