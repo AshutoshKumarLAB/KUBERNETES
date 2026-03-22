@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: imagepullbackoff-pod
+spec:
+  containers:
+  - name: image-container
+    image: invalidimagename12345
