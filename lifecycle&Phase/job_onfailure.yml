@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: onfailure-job
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: OnFailure   
+      containers:
+      - name: test-container
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          echo "Failing..."
+          sleep 2
+          exit 1
